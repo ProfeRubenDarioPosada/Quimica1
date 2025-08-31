@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Química Interactiva: Reactivo Límite y en Exceso</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        :root {
+            --color-bg: #1e1e2d;
+            --color-bg-light: #2d2d44;
+            --color-primary: #ff6b6b;
+            --color-secondary: #48dbfb;
+            --color-accent: #feca57;
+            --color-text: #f0f0f0;
+            --color-correct: #2ecc71;
+            --color-incorrect: #e74c3c;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--color-bg-light);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        /* --- CABECERA --- */
+        header {
+            text-align: center;
+            border-bottom: 3px solid var(--color-primary);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            color: var(--color-primary);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        header .meta-info {
+            font-size: 0.9rem;
+            color: var(--color-secondary);
+        }
+
+        /* --- SECCIONES DE CONTENIDO --- */
+        .content-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            border-left: 5px solid var(--color-secondary);
+        }
+        
+        .content-section h2 {
+            font-size: 2rem;
+            color: var(--color-secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .content-section h2 .emoji {
+            font-size: 2.5rem;
+            margin-right: 15px;
+        }
+        
+        .content-section p, .content-section ul {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        
+        .content-section strong {
+            color: var(--color-accent);
+        }
+        
+        .analogy {
+            background-color: #252538;
+            border: 1px dashed var(--color-accent);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .analogy-title {
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+
+        /* --- CUESTIONARIO INTERACTIVO --- */
+        #quiz {
+            background-color: var(--color-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+        }
+
+        #quiz h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            color: var(--color-primary);
+            margin-bottom: 25px;
+        }
+
+        .question-block {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: var(--color-bg-light);
+            border-radius: 8px;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            background-color: rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .options label:hover {
+            background-color: var(--color-primary);
+        }
+        
+        .fill-blank-input {
+            width: 150px;
+            background-color: #333;
+            border: 1px solid var(--color-secondary);
+            color: var(--color-text);
+            padding: 5px;
+            border-radius: 4px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .feedback {
+            font-weight: bold;
+            margin-left: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .correct { color: var(--color-correct); }
+        .incorrect { color: var(--color-incorrect); }
+        
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-bg);
+            background-color: var(--color-accent);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(254, 202, 87, 0.4);
+        }
+
+        #score-container {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            display: none; /* Oculto hasta que se revisa */
+        }
+        
+        /* --- Media Queries para Responsividad --- */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.2rem; }
+            .content-section h2 { font-size: 1.6rem; }
+            body { padding: 10px; }
+            .container { padding: 15px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🔥 Reactivo Límite y en Exceso 🔥</h1>
+            <div class="meta-info">
+                Autor: Rubén Darío Posada | Área: Ciencias Naturales | Asignatura: Química
+            </div>
+        </header>
+
+        <main>
+            <section id="introduction" class="content-section">
+                <h2><span class="emoji">🤔</span>¿Qué es todo esto?</h2>
+                <p>¡Hey! ¿Alguna vez has intentado hacer sándwiches para tus amigos y te quedaste sin pan, pero todavía te sobraba un montón de queso? 🥪 ¡Exacto! En la química pasa algo muy parecido. Casi nunca tenemos las cantidades *perfectas* de los ingredientes (los llamamos <strong>reactivos</strong>). Siempre hay uno que se acaba primero y detiene toda la "receta".</p>
+                <p>Ese aguafiestas que se acaba primero es el <strong>reactivo límite</strong>, y el que sobra es el <strong>reactivo en exceso</strong>. ¡En este módulo vamos a convertirnos en chefs de la química para dominar este concepto! 🧪</p>
+            </section>
+
+            <section id="subtema1" class="content-section">
+                <h2><span class="emoji">📜</span>Subtema 1: Las Partes de una Ecuación Química</h2>
+                <p>Una ecuación química es como la receta de un platillo. Nos dice qué ingredientes necesitamos y qué vamos a obtener. ¡Veamos sus partes!</p>
+                <p>Tomemos la formación de agua como ejemplo: <code>2H₂ + O₂ → 2H₂O</code></p>
+                <ul>
+                    <li><strong>Reactivos:</strong> Son los ingredientes. Todo lo que está a la izquierda de la flecha. Aquí son el Hidrógeno (H₂) y el Oxígeno (O₂).</li>
+                    <li><strong>Productos:</strong> Es el platillo final. Todo lo que está a la derecha de la flecha. En nuestro caso, es el Agua (H₂O).</li>
+                    <li><strong>Coeficientes Estequiométricos:</strong> Son los números GRANDES que van delante de cada compuesto (como el 2 frente al H₂). Nos dicen la *proporción* o la cantidad de "paquetes" (moles) que se necesitan. Si no hay número, ¡es un 1!</li>
+                </ul>
+                <div class="analogy">
+                  <p class="analogy-title">💡 Analogía de la Receta:</p>
+                  <p><code>2 rebanadas de pan + 1 rebanada de queso → 1 sándwich</code>. Aquí, el pan y el queso son los reactivos, el sándwich es el producto, y los números 2 y 1 son los coeficientes.</p>
+                </div>
+            </section>
+
+            <section id="subtema2" class="content-section">
+                <h2><span class="emoji">⚖️</span>Subtema 2: Reactivo Límite y Exceso (¡Solo con Moles!)</h2>
+                <p>Ok, ¡a cocinar! Imagina que la receta (ecuación balanceada) es <code>1N₂ + 3H₂ → 2NH₃</code>. Esto significa que necesitas 1 mol de Nitrógeno por cada 3 moles de Hidrógeno.</p>
+                <p>Ahora, supongamos que en tu "cocina" tienes <strong>4 moles de N₂</strong> y <strong>9 moles de H₂</strong>. ¿Quién se acaba primero?</p>
+                <ol>
+                    <li><strong>Compara con un reactivo:</strong> Usemos el N₂. Si gastaras los 4 moles de N₂, ¿cuánto H₂ necesitarías? La receta dice 3 de H₂ por cada 1 de N₂, así que: <code>4 moles N₂ * (3 moles H₂ / 1 mol N₂) = 12 moles de H₂</code>.</li>
+                    <li><strong>Verifica si tienes suficiente:</strong> ¡Oh, oh! Necesitas 12 moles de H₂, pero solo tienes 9. ¡No te alcanza! Esto significa que el <strong>Hidrógeno (H₂) es tu reactivo límite</strong>. Él se acabará primero.</li>
+                    <li><strong>Conclusión:</strong> El Nitrógeno (N₂) es el <strong>reactivo en exceso</strong>. ¡Te va a sobrar! El H₂ decide cuánto amoníaco (NH₃) puedes producir.</li>
+                </ol>
+                 <div class="analogy">
+                  <p class="analogy-title">💡 Analogía de las Bicicletas:</p>
+                  <p>Si tienes 10 cuadros de bici pero solo 12 ruedas (y necesitas 2 por bici), las ruedas son tu reactivo límite. Solo podrás armar 6 bicicletas, aunque te sobren 4 cuadros (reactivo en exceso).</p>
+                </div>
+            </section>
+
+            <section id="subtema3" class="content-section">
+                <h2><span class="emoji">🔄</span>Subtema 3: El Juego Completo: De Gramos a Moles</h2>
+                <p>En el laboratorio real, no medimos en moles, ¡pesamos en gramos!  grams! Así que, ¿qué hacemos si nos dan los reactivos en gramos? ¡Fácil! Los convertimos a moles primero. Para eso usamos la <strong>Masa Molar (g/mol)</strong>, que sacamos de la tabla periódica.</p>
+                <p>El flujo de trabajo es el siguiente:</p>
+                <p><strong>Gramos del Reactivo A → Moles del Reactivo A</strong><br>
+                <strong>Gramos del Reactivo B → Moles del Reactivo B</strong></p>
+                <p>Una vez que tienes los moles de ambos, haces exactamente el mismo proceso del subtema 2 para encontrar el reactivo límite. Después, si quieres saber cuántos gramos de producto obtendrás, simplemente conviertes los moles de producto (calculados con el reactivo límite) de vuelta a gramos. ¡Y listo! ⚛️</p>
+                <p><code>Moles de Producto → Gramos de Producto</code></p>
+            </section>
+
+            <section id="quiz">
+                <h2>¡Ponte a Prueba! Demuestra lo que Aprendiste 🧠</h2>
+                <form id="quiz-form">
+                    <div class="question-block">
+                        <p class="question-text">1. ¿Qué es el reactivo límite?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q1" value="a"> El que tiene más masa.</label>
+                            <label><input type="radio" name="q1" value="b"> El que se consume por completo primero.</label>
+                            <label><input type="radio" name="q1" value="c"> El que sobra al final.</label>
+                            <label><input type="radio" name="q1" value="d"> El producto de la reacción.</label>
+                        </div>
+                        <span class="feedback" id="feedback-q1"></span>
+                    </div>
+
+                    <div class="question-block">
+                        <p class="question-text">2. Las sustancias con las que inicias una reacción se llaman:</p>
+                        <div class="options">
+                            <label><input type="radio" name="q2" value="a"> Reactivos.</label>
+                            <label><input type="radio" name="q2" value="b"> Productos.</label>
+                            <label><input type="radio" name="q2" value="c"> Coeficientes.</label>
+                            <label><input type="radio" name="q2" value="d"> Catalizadores.</label>
+                        </div>
+                        <span class="feedback" id="feedback-q2"></span>
+                    </div>
+                    
+                    <div class="question-block">
+                        <p class="question-text">3. Para la reacción <code>A + 2B → C</code>, si tienes 3 moles de A y 5 moles de B, ¿cuál es el reactivo límite?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q3" value="a"> A</label>
+                            <label><input type="radio" name="q3" value="b"> B</label>
+                            <label><input type="radio" name="q3" value="c"> C</label>
+                            <label><input type="radio" name="q3" value="d"> Ninguno</label>
+                        </div>
+                        <span class="feedback" id="feedback-q3"></span>
+                    </div>
+
+                    <div class="question-block">
+                        <p class="question-text">4. ¿Qué herramienta usas para convertir gramos a moles?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q4" value="a"> El número de Avogadro.</label>
+                            <label><input type="radio" name="q4" value="b"> La densidad.</label>
+                            <label><input type="radio" name="q4" value="c"> La masa molar.</label>
+                            <label><input type="radio" name="q4" value="d"> Un termómetro.</label>
+                        </div>
+                        <span class="feedback" id="feedback-q4"></span>
+                    </div>
+
+                    <div class="question-block">
+                        <p class="question-text">5. La cantidad MÁXIMA de producto que puedes obtener depende del...</p>
+                        <div class="options">
+                            <label><input type="radio" name="q5" value="a"> Reactivo en exceso.</label>
+                            <label><input type="radio" name="q5" value="b"> Reactivo límite.</label>
+                            <label><input type="radio" name="q5" value="c"> Tamaño del recipiente.</label>
+                            <label><input type="radio" name="q5" value="d"> La temperatura ambiente.</label>
+                        </div>
+                        <span class="feedback" id="feedback-q5"></span>
+                    </div>
+
+                    <div class="question-block">
+                        <p class="question-text">6. En <code>2H₂ + O₂ → 2H₂O</code>, los números 2, 1 (implícito) y 2 son:</p>
+                        <div class="options">
+                            <label><input type="radio" name="q6" value="a"> Masas atómicas.</label>
+                            <label><input type="radio" name="q6" value="b"> Cargas iónicas.</label>
+                            <label><input type="radio" name="q6" value="c"> Coeficientes estequiométricos.</label>
+                            <label><input type="radio" name="q6" value="d"> Productos.</label>
+                        </div>
+                        <span class="feedback" id="feedback-q6"></span>
+                    </div>
+
+                    <div class="question-block">
+                        <p class="question-text">7. Si un reactivo queda sobrando al final de la reacción, es el...</p>
+                        <div class="options">
+                            <label><input type="radio" name="q7" value="a"> Reactivo en exceso.</label>
+                            <label><input type="radio" name="q7" value="b"> Reactivo límite.</label>
+                            <label><input type="radio" name="q7" value="c"> Producto secundario.</label>
+                            <label><input type="radio" name="q7" value="d"> Catalizador.</label>
+                        </div>
+                        <span class="feedback" id="feedback-q7"></span>
+                    </div>
+
+                    <div class="question-block">
+                        <p class="question-text">8. La flecha (→) en una ecuación química significa:</p>
+                        <div class="options">
+                            <label><input type="radio" name="q8" value="a"> "Es igual a"</label>
+                            <label><input type="radio" name="q8" value="b"> "Se mezcla con"</label>
+                            <label><input type="radio" name="q8" value="c"> "Produce" o "Reacciona para formar"</label>
+                            <label><input type="radio" name="q8" value="d"> "Está en equilibrio con"</label>
+                        </div>
+                        <span class="feedback" id="feedback-q8"></span>
+                    </div>
+
+                    <div class="question-block">
+                        <p class="question-text">9. ¿Cuál es el primer paso si te dan los reactivos en gramos?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q9" value="a"> Mezclarlos directamente.</label>
+                            <label><input type="radio" name="q9" value="b"> Convertir todo a moles.</label>
+                            <label><input type="radio" name="q9" value="c"> Calcular el producto en gramos.</label>
+                            <label><input type="radio" name="q9" value="d"> Calentar la mezcla.</label>
+                        </div>
+                        <span class="feedback" id="feedback-q9"></span>
+                    </div>
+                    
+                    <div class="question-block">
+                        <p class="question-text">10. En la analogía de los sándwiches, si tienes 20 rebanadas de pan y 15 de queso (receta: 2 de pan, 1 de queso), ¿qué ingrediente es el límite?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q10" value="a"> El pan.</label>
+                            <label><input type="radio" name="q10" value="b"> El queso.</label>
+                            <label><input type="radio" name="q10" value="c"> Ambos se acaban al mismo tiempo.</label>
+                            <label><input type="radio" name="q10" value="d"> El sándwich.</label>
+                        </div>
+                        <span class="feedback" id="feedback-q10"></span>
+                    </div>
+
+                    <div class="question-block">
+                        <p class="question-text">11. El reactivo que se agota primero se llama reactivo <input type="text" id="f1" class="fill-blank-input">. <span class="feedback" id="feedback-f1"></span></p>
+                    </div>
+                    <div class="question-block">
+                        <p class="question-text">12. Las sustancias que se forman en una reacción se conocen como <input type="text" id="f2" class="fill-blank-input">. <span class="feedback" id="feedback-f2"></span></p>
+                    </div>
+                    <div class="question-block">
+                        <p class="question-text">13. Para saber qué reactivo es el límite, siempre debemos comparar la cantidad de <input type="text" id="f3" class="fill-blank-input">. <span class="feedback" id="feedback-f3"></span></p>
+                    </div>
+                    <div class="question-block">
+                        <p class="question-text">14. El reactivo que no se consume por completo es el reactivo en <input type="text" id="f4" class="fill-blank-input">. <span class="feedback" id="feedback-f4"></span></p>
+                    </div>
+                    <div class="question-block">
+                        <p class="question-text">15. La masa en gramos de un mol de cualquier sustancia se llama <input type="text" id="f5" class="fill-blank-input"> molar. <span class="feedback" id="feedback-f5"></span></p>
+                    </div>
+                    <div class="question-block">
+                        <p class="question-text">16. Los números grandes que balancean una ecuación se llaman <input type="text" id="f6" class="fill-blank-input">. <span class="feedback" id="feedback-f6"></span></p>
+                    </div>
+                    <div class="question-block">
+                        <p class="question-text">17. El estudio de las relaciones de cantidad en química se llama <input type="text" id="f7" class="fill-blank-input">. <span class="feedback" id="feedback-f7"></span></p>
+                    </div>
+                    <div class="question-block">
+                        <p class="question-text">18. Las sustancias a la izquierda de la flecha en una ecuación son los <input type="text" id="f8" class="fill-blank-input">. <span class="feedback" id="feedback-f8"></span></p>
+                    </div>
+                     <div class="question-block">
+                        <p class="question-text">19. Una ecuación química balanceada cumple la Ley de la Conservación de la <input type="text" id="f9" class="fill-blank-input">. <span class="feedback" id="feedback-f9"></span></p>
+                    </div>
+                     <div class="question-block">
+                        <p class="question-text">20. El rendimiento <input type="text" id="f10" class="fill-blank-input"> es la máxima cantidad de producto que se puede formar teóricamente. <span class="feedback" id="feedback-f10"></span></p>
+                    </div>
+
+                    <button type="submit" class="submit-btn">¡Revisar Mis Respuestas!</button>
+                </form>
+
+                <div id="score-container"></div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const quizForm = document.getElementById('quiz-form');
+        const scoreContainer = document.getElementById('score-container');
+
+        const correctAnswers = {
+            q1: 'b',
+            q2: 'a',
+            q3: 'b', // 3 moles de A necesitan 6 de B. Solo hay 5 de B, así que B es el límite.
+            q4: 'c',
+            q5: 'b',
+            q6: 'c',
+            q7: 'a',
+            q8: 'c',
+            q9: 'b',
+            q10: 'a', // Con 20 de pan haces 10 sándwiches. Con 15 de queso haces 15. El pan se acaba primero.
+            f1: 'límite',
+            f2: 'productos',
+            f3: 'moles',
+            f4: 'exceso',
+            f5: 'masa',
+            f6: 'coeficientes',
+            f7: 'estequiometría',
+            f8: 'reactivos',
+            f9: 'masa',
+            f10: 'teórico'
+        };
+
+        quizForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            let score = 0;
+            const totalQuestions = 20;
+
+            // --- Evaluar preguntas de selección múltiple ---
+            for (let i = 1; i <= 10; i++) {
+                const questionName = `q${i}`;
+                const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+                const feedbackSpan = document.getElementById(`feedback-${questionName}`);
+
+                if (selectedOption) {
+                    if (selectedOption.value === correctAnswers[questionName]) {
+                        score++;
+                        feedbackSpan.textContent = '✅ ¡Correcto!';
+                        feedbackSpan.className = 'feedback correct';
+                    } else {
+                        feedbackSpan.textContent = '❌ Incorrecto...';
+                        feedbackSpan.className = 'feedback incorrect';
+                    }
+                } else {
+                    feedbackSpan.textContent = '🤔 Sin responder';
+                    feedbackSpan.className = 'feedback';
+                }
+            }
+
+            // --- Evaluar preguntas de completar la frase ---
+            for (let i = 1; i <= 10; i++) {
+                const inputId = `f${i}`;
+                const userInput = document.getElementById(inputId).value.trim().toLowerCase();
+                const feedbackSpan = document.getElementById(`feedback-${inputId}`);
+                
+                if (userInput === correctAnswers[inputId]) {
+                    score++;
+                    feedbackSpan.textContent = '✅ ¡Correcto!';
+                    feedbackSpan.className = 'feedback correct';
+                } else {
+                    feedbackSpan.textContent = '❌ Incorrecto...';
+                    feedbackSpan.className = 'feedback incorrect';
+                }
+            }
+
+            // --- Mostrar puntuación final ---
+            scoreContainer.style.display = 'block';
+            let scoreMessage = '';
+            const percentage = (score / totalQuestions) * 100;
+
+            if (percentage < 50) {
+                scoreMessage = '¡Sigue estudiando, tú puedes! 💪';
+                scoreContainer.style.backgroundColor = 'var(--color-incorrect)';
+            } else if (percentage < 85) {
+                scoreMessage = '¡Buen trabajo! Vas por excelente camino. 👍';
+                scoreContainer.style.backgroundColor = 'var(--color-accent)';
+                 scoreContainer.style.color = 'var(--color-bg)';
+            } else {
+                scoreMessage = '¡Excelente trabajo! ¡Eres un genio de la química! ⚛️✨';
+                scoreContainer.style.backgroundColor = 'var(--color-correct)';
+            }
+            
+            scoreContainer.innerHTML = `Tu puntuación: ${score}/${totalQuestions}. ${scoreMessage}`;
+            scoreContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+
+</body>
+</html>
